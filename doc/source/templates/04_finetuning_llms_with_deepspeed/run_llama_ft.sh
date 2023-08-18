@@ -43,7 +43,7 @@ fine_tune() {
 }
 
 # Variables for cleaner handling
-BASE_DIR="/mnt/local_storage"
+BASE_DIR="/tmp/output"
 DATA_DIR="./data"
 TRAIN_PATH="${DATA_DIR}/train.jsonl"
 TEST_PATH="${DATA_DIR}/test.jsonl"
@@ -65,8 +65,8 @@ done
 # Batch size and node count
 case $SIZE in
 "7b")
-    BS=16
-    ND=16
+    BS=5
+    ND=5
     ;;
 "13b")
     BS=16
@@ -86,7 +86,7 @@ esac
 MODEL_ID="meta-llama/Llama-2-${SIZE}-hf"
 CONFIG_DIR="./deepspeed_configs/zero_3_llama_2_${SIZE}.json"
 
-check_and_create_dataset "${DATA_DIR}"
+#check_and_create_dataset "${DATA_DIR}"
 fine_tune "$BS" "$ND" "$MODEL_ID" "$BASE_DIR" "$CONFIG_DIR" "$TRAIN_PATH" "$TEST_PATH" "$TOKEN_PATH" "${params[@]}"
 
 echo "Process completed."

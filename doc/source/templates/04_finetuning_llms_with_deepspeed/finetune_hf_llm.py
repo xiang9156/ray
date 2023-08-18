@@ -552,15 +552,7 @@ def main():
 
     os.environ["TUNE_RESULT_DIR"] = args.output_dir
 
-    ray.init(
-        runtime_env={
-            "env_vars": {
-                "HF_HOME": "/mnt/local_storage/.cache/huggingface",
-                "TUNE_RESULT_DIR": os.environ["TUNE_RESULT_DIR"],
-            },
-            "working_dir": ".",
-        }
-    )
+    ray.init()
 
     # Read data
     train_ds = ray.data.read_json(args.train_path)
@@ -573,11 +565,7 @@ def main():
     with open(args.special_token_path, "r") as json_file:
         special_tokens = json.load(json_file)["tokens"]
 
-    artifact_storage = os.environ.get("ANYSCALE_ARTIFACT_STORAGE", "artifact_storage")
-    user_name = re.sub(r"\s+", "__", os.environ.get("ANYSCALE_USERNAME", "user"))
-    storage_path = (
-        f"{artifact_storage}/{user_name}/ft_llms_with_deepspeed/{args.model_name}"
-    )
+    storage_path = f"s3://test-checkpoints/xiang/{args.model_name}"
 
     trainer = TorchTrainer(
         training_function,
